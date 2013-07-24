@@ -2,12 +2,12 @@ require "spec/spec_helper.rb"
 require 'java'
 require File.expand_path("#{ROOT}/checker.rb")
 
-describe Checker do
+describe PackageDependencyChecker do
   before :each do
-    source_package = 'japa.parser.ast'
-    source_dir = './spec/src'
+    source_packages = ['japa.parser.ast']
+    source_dirs = ['./spec/src']
     target_packages = ['japa.parser.ast.*']
-    @checker = Checker.new(source_package, source_dir, target_packages)
+    @checker = PackageDependencyChecker.new(source_packages, source_dirs, target_packages)
   end
 
   context "#get_missing_package_dependency" do

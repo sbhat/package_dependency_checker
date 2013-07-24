@@ -1,10 +1,10 @@
 require 'java_source/sfile.rb'
 require 'java_source/package.rb'
 
-class Checker
-  def initialize source_package, source_dir, target_packages
-    @source_package = source_package
-    @source_dir = source_dir
+class PackageDependencyChecker
+  def initialize source_packages, source_dirs, target_packages
+    @source_packages = source_packages
+    @source_dirs = source_dirs
     @target_packages = target_packages.map{|package| JavaSource::Package.new(package)}
   end
 
@@ -42,7 +42,11 @@ class Checker
   end
 
   def source_filenames
-    source_dir_path = "#{@source_dir}/#{@source_package.split('.').join('/')}"
-    Dir["#{source_dir_path}/**/*"].select{|file_path| !File.directory?(file_path)}
+    @source_dirs.map do |source_dir|
+      @source_packages.map do |source_package|
+        source_dir_path = "#{source_dir}/#{source_package.split('.').join('/')}"
+        Dir["#{source_dir_path}/**/*.java"].select{|file_path| !File.directory?(file_path)}
+      end
+    end.flatten
   end
 end
