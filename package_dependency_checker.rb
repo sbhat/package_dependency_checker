@@ -1,5 +1,6 @@
 require 'java_source/sfile.rb'
 require 'java_source/package.rb'
+require 'lib/ruby/java_lib.rb'
 
 class PackageDependencyChecker
   def initialize source_packages, source_dirs, target_packages
@@ -32,11 +33,17 @@ class PackageDependencyChecker
   end
 
   def source_files
-    source_filenames.map {|file_name| JavaSource::SFile.new(file_name)}
+    source_filenames.map do |file_name|
+      begin
+        JavaSource::SFile.new(file_name)
+      rescue JavaLib::ParseException => e
+        puts "[Warning] Failed to parse the java file #{file_name}!!"
+      end
+    end.compact
   end
 
   def belongs_to_target_packages? pkg
-    accepts = false 
+    accepts = false
     @target_packages.map{|package| accepts ||= package.accepts?(pkg)}
     accepts
   end

@@ -1,7 +1,7 @@
 ROOT = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(ROOT)
 
-require 'checker.rb'
+require 'package_dependency_checker.rb'
 
 source_packages = ENV['source']
 source_dirs = ENV['dir']

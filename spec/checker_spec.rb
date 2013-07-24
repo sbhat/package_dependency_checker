@@ -1,6 +1,6 @@
 require "spec/spec_helper.rb"
 require 'java'
-require File.expand_path("#{ROOT}/checker.rb")
+require File.expand_path("#{ROOT}/package_dependency_checker.rb")
 
 describe PackageDependencyChecker do
   before :each do
