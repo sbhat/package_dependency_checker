@@ -1,6 +1,6 @@
 require 'spec/spec_helper.rb'
 require 'java'
-require 'java_source/sfile.rb'
+require 'app/java_source/sfile.rb'
 
 describe JavaSource::SFile do
   before :each do

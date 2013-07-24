@@ -1,7 +1,7 @@
 ROOT = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(ROOT)
 
-require 'package_dependency_checker.rb'
+require 'app/package_dependency_checker.rb'
 
 source_packages, source_dirs, target_packages = ENV['source'], ENV['dir'], ENV['target']
 if source_dirs.nil? || source_packages.nil? || target_packages.nil?

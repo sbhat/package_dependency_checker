@@ -1,5 +1,5 @@
-require 'java_source/sfile.rb'
-require 'java_source/package.rb'
+require 'app/java_source/sfile.rb'
+require 'app/java_source/package.rb'
 require 'lib/ruby/java_lib.rb'
 
 class PackageDependencyChecker
