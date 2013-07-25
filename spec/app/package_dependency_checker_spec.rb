@@ -1,6 +1,6 @@
 require "spec/spec_helper.rb"
 require 'java'
-require File.expand_path("#{ROOT}/app/package_dependency_checker.rb")
+require "app/package_dependency_checker.rb"
 
 describe PackageDependencyChecker do
   before :each do
@@ -8,17 +8,6 @@ describe PackageDependencyChecker do
     source_dirs = ['./spec/src']
     target_packages = ['japa.parser.ast.*']
     @checker = PackageDependencyChecker.new(source_packages, source_dirs, target_packages)
-  end
-
-  context "#a_parent_target_package_for" do
-    it "should return matching target package" do
-      @checker.send(:a_parent_target_package_for, 'japa.parser.ast.body').should_not be_nil
-      @checker.send(:a_parent_target_package_for, 'japa.parser.ast.body').instance_variable_get("@name").should == 'japa.parser.ast'
-    end
-
-    it "should return nil when no matching target package found" do
-      @checker.send(:a_parent_target_package_for, 'japa.parser').should be_nil
-    end
   end
 
   context "#missing_package_dependency" do
