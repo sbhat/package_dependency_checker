@@ -14,14 +14,14 @@ class JavaSource::PackageTree
     matching_node
   end
 
-  def matching_root_node match_node
+  def find_by_node match_node
     @root_nodes.detect{|node| node.matches?(match_node)}
   end
 
   def - (target_tree)
     root_nodes = []
     @root_nodes.each do |root_node|
-      target_root_node = target_tree.matching_root_node(root_node)
+      target_root_node = target_tree.find_by_node(root_node)
       if target_root_node.nil?
         root_nodes << root_node
       else
