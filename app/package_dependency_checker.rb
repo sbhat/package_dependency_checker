@@ -12,6 +12,7 @@ class PackageDependencyChecker
   def report suppress_stdout = false
     output, counter = "", 0
     missing_package_dependency.each{|name, dependency| counter+=1; output << "#{counter}. #{name} depends on #{dependency}\n"}
+    output << "No missing package dependency." if output == ""
     puts output unless suppress_stdout
     output
   end
@@ -45,11 +46,13 @@ class PackageDependencyChecker
   end
 
   def source_files
-    source_filepaths.map do |file_name|
+    filepaths = source_filepaths
+    puts "[Warning] No java files found under source packages!!" if filepaths.empty?
+    filepaths.map do |file_name|
       begin
         JavaSource::JavaFile.new(file_name)
       rescue JavaLib::ParseException => e
-        puts "[Warning] Failed to parse the java file #{file_name}!!"
+        puts "[Warning] Failed to parse java file #{file_name}!!"
         nil
       end
     end.compact
