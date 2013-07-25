@@ -41,7 +41,7 @@ class PackageDependencyChecker
   end
 
   def a_parent_target_package_for package
-    @target_packages.detect{|target_package| target_package.matches?(package)}
+    @target_packages.detect{|target_package| target_package.matches_or_contains?(package)}
   end
 
   def source_files

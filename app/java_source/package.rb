@@ -8,13 +8,13 @@ module JavaSource
       @regex_match_parent_and_child_packages = /^#{@name}(.([A-Za-z0-9])*)*/
     end
 
-    def matches? source_package_name
-      @match_child_packages ? parent_of?(source_package_name)  : matches_exactly?(source_package_name)
+    def matches_or_contains? source_package_name
+      @match_child_packages ? parent_of?(source_package_name)  : matches?(source_package_name)
     end
 
     private
 
-    def matches_exactly? source_package_name
+    def matches? source_package_name
       source_package_name == @name
     end
 
