@@ -18,32 +18,33 @@ class JavaSource::PackageTree
     @root_nodes.detect{|node| node.matches?(match_node)}
   end
 
-  def - (target_tree)
-    root_nodes = []
+  def - (target_package_tree)
+    new_root_nodes = []
     @root_nodes.each do |root_node|
-      target_root_node = target_tree.find_by_node(root_node)
-      if target_root_node.nil?
-        root_nodes << root_node
-      else
-        new_node =  root_node - target_root_node
-        root_nodes << new_node if new_node
-      end
+      matching_root_node = target_package_tree.find_by_node(root_node)
+      no_matching_root_node = matching_root_node.nil?
+      new_node = (no_matching_root_node ? root_node : (root_node - matching_root_node))
+      new_root_nodes << new_node if new_node
     end
 
-    self.class.new(root_nodes)
+    self.class.new(new_root_nodes)
   end
 
-  def self.add package_name
+  def self.create_by package_name
     package_names = package_name.split('.')
-    new_root_node = (package_names.empty? ? nil : JavaSource::PackageTreeNode.add(package_names.first, nil, (package_names[1..-1] || []), 0))
-    self.new([new_root_node].compact)
+    return self.new if package_names.empty?
+
+    root_package = package_names.first
+    child_packages = (package_names[1..-1] || [])
+    new_root_node = JavaSource::PackageTreeNode.add(root_package, nil, child_packages, 0)
+
+    self.new([new_root_node])
   end
 
   def add package_name
     package_names = package_name.split('.')
     unless package_names.empty?
-      matching_root_node = find_node_by_name_and_level(package_names.first, 0)
-      if matching_root_node
+      if matching_root_node = find_node_by_name_and_level(package_names.first, 0)
         matching_root_node.add_child_nodes(package_names[1..-1] || [])
       else
         new_root_node = JavaSource::PackageTreeNode.add(package_names.first, nil, (package_names[1..-1] || []), 0)
@@ -52,9 +53,7 @@ class JavaSource::PackageTree
     end
   end
 
-  def to_a
-    @root_nodes.map do |root_node|
-      root_node.to_a
-    end.flatten
+  def packages
+    @root_nodes.map{|root_node| root_node.packages}.flatten
   end
 end

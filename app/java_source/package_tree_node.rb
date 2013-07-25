@@ -28,20 +28,20 @@ class JavaSource::PackageTreeNode
     end
   end
 
-  def to_a
+  def packages
     if @child_nodes.empty?
       [@name]
     else
-      @child_nodes.map{|child_node| child_node.to_a}.flatten.map{|child_name| "#{@name}.#{child_name}"}
+      @child_nodes.map{|child_node| child_node.packages}.flatten.map{|child_name| "#{@name}.#{child_name}"}
     end
   end
 
-  def is? name, level
+  def matches_by_name_and_level? name, level
     @name == name && @level == level
   end
 
   def find_by_name_and_level name, level
-    return self if iam?(name, level)
+    return self if matches_by_name_and_level?(name, level)
     if level > @level
       matching_node = nil
       @child_nodes.each do |child_node|
@@ -61,7 +61,7 @@ class JavaSource::PackageTreeNode
     elsif matches_exactly?(target_package_node)
       return nil
     elsif matches?(target_package_node)
-      return clone_with(left_join_of_child_nodes(package_tree_node))
+      return clone_with(left_join_of_child_nodes(target_package_node))
     else
       return self
     end
@@ -96,8 +96,6 @@ class JavaSource::PackageTreeNode
   end
 
   private
-
-  alias :iam? :is?
 
   def matches_all? package_tree_node
     matches?(package_tree_node) && package_tree_node.matches_all_child_nodes?
@@ -134,18 +132,18 @@ class JavaSource::PackageTreeNode
   end
 
   def leaf_child_nodes
-    @child_nodes.select{|node| node.leaf_node?}
+    @child_nodes.select{|node| node.leaf_node?} || []
   end
 
   def has_leaf_child_nodes?
-    !@leaf_child_nodes.empty?
+    !leaf_child_nodes.empty?
   end
 
   def non_leaf_child_nodes
-    @child_nodes.select{|node| !node.leaf_node?}
+    @child_nodes.select{|node| !node.leaf_node?} || []
   end
 
   def has_non_leaf_child_nodes?
-    !@non_leaf_child_nodes.empty?
+    !non_leaf_child_nodes.empty?
   end
 end
