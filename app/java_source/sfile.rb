@@ -17,7 +17,7 @@ module JavaSource
     end
 
     def dependent_packages
-      (@jcompilation_unit.imports || []).map{|package| package.name.to_s}.to_a.uniq
+      (@jcompilation_unit.imports || []).to_a
     end
   end
 end

@@ -28,8 +28,9 @@ class PackageDependencyChecker
   private
 
   def missing_dependent_packages java_file
-    jimports = java_file.dependent_packages
-    jimports.select { |jpackage| !belongs_to_target_packages?(jpackage) }
+    jpackages = java_file.dependent_packages
+    jpackages.select!{|jpackage| !belongs_to_target_packages?(jpackage.name.qualifier.to_s)}
+    jimports.map{|package| package.name.to_s}
   end
 
   def source_files
