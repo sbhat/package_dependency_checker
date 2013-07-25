@@ -7,15 +7,15 @@ describe JavaSource::SFile do
     @file = JavaSource::SFile.new("#{ROOT}/spec/src/japa/parser/ASTParser.java")
   end
 
-  context "#package" do
+  context "#source_package" do
     it "should return the package the java type defined in the file belongs to" do
-      @file.package.should == 'japa.parser'
+      @file.source_package.should == 'japa.parser'
     end
   end
 
-  context "#dependent_packages" do
+  context "#import_declarations" do
     it "should return an array of dependent packages" do
-      @file.dependent_packages.first.should == 'japa.parser.ast.Comment'
+      @file.import_declarations.first.name.to_s.should == 'japa.parser.ast.Comment'
     end
   end
 end

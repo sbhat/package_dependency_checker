@@ -1,19 +1,25 @@
 module JavaSource
   class Package
-    def initialize name
-      @name = name
-      @scopes = name.split('.')
-      @is_asterics = (@scopes.last == "*")
+    REGEX_MATCH_NAME_ENDING_WITH_ASTERICS = /(.\*)$/
 
-      @scope = @is_asterics ? @scopes[0..(@scopes.size-2)].join('.') : name
+    def initialize name
+      @match_child_packages = !(name =~ REGEX_MATCH_NAME_ENDING_WITH_ASTERICS).nil?
+      @name = @match_child_packages ? name.gsub('.*', '') : name
+      @regex_match_parent_and_child_packages = /^#{@name}(.([A-Za-z0-9])*)*/
     end
 
-    def accepts? source_package_name
-      if @is_asterics
-        return !(/^#{@scope}*/ =~ source_package_name).nil?
-      else
-        return source_package_name == @scope
-      end
+    def matches? source_package_name
+      @match_child_packages ? parent_of?(source_package_name)  : matches_exactly?(source_package_name)
+    end
+
+    private
+
+    def matches_exactly? source_package_name
+      source_package_name == @name
+    end
+
+    def parent_of? source_package_name
+      !(source_package_name =~ @regex_match_parent_and_child_packages).nil?
     end
   end
 end

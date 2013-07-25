@@ -12,11 +12,11 @@ module JavaSource
       @name = File.basename(file_path)
     end
 
-    def package
+    def source_package
       @jcompilation_unit.package.name.to_s
     end
 
-    def dependent_packages
+    def import_declarations
       (@jcompilation_unit.imports || []).to_a
     end
   end
