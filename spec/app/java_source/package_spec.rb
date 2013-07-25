@@ -16,30 +16,38 @@ describe JavaSource::Package do
 
   context "#parent_of?" do
     context " in case of asteric in the name" do
+      before :each do
+        @package = JavaSource::Package.new('japa.parser.ast.*')
+      end
+
       it "should return true for qualifier same as the parent" do
-        JavaSource::Package.new('japa.parser.ast.*').matches_or_contains?('japa.parser.ast').should be_true
+        @package.matches_or_contains?('japa.parser.ast').should be_true
       end
 
       it "should return false for qualifier parent of the target package" do
-        JavaSource::Package.new('japa.parser.ast.*').matches_or_contains?('japa.parser').should be_false
+        @package.matches_or_contains?('japa.parser').should be_false
       end
 
       it "should return false for qualifier is not part of the target package" do
-        JavaSource::Package.new('japa.parser.ast.*').matches_or_contains?('java.util').should be_false
+        @package.matches_or_contains?('java.util').should be_false
       end
 
       it "should return true for qualifiers that are a subset of the parent" do
-        JavaSource::Package.new('japa.parser.ast.*').matches_or_contains?('japa.parser.ast.body').should be_true
+        @package.matches_or_contains?('japa.parser.ast.body').should be_true
       end
     end
 
     context " in case of static name" do
+      before :each do
+        @package = JavaSource::Package.new('japa.parser.ast')
+      end
+
       it "should return true when matches with the static package" do
-        JavaSource::Package.new('japa.parser.ast').matches_or_contains?('japa.parser.ast').should be_true
+        @package.matches_or_contains?('japa.parser.ast').should be_true
       end
 
       it "should return false when is a subset of the static package" do
-        JavaSource::Package.new('japa.parser.ast').matches_or_contains?('japa.parser.ast.body').should be_false
+        @package.matches_or_contains?('japa.parser.ast.body').should be_false
       end
     end
   end

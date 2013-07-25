@@ -1,4 +1,4 @@
-require 'app/java_source/sfile.rb'
+require 'app/java_source/java_file.rb'
 require 'app/java_source/package.rb'
 require 'lib/ruby/java_lib.rb'
 
@@ -47,7 +47,7 @@ class PackageDependencyChecker
   def source_files
     source_filepaths.map do |file_name|
       begin
-        JavaSource::SFile.new(file_name)
+        JavaSource::JavaFile.new(file_name)
       rescue JavaLib::ParseException => e
         puts "[Warning] Failed to parse the java file #{file_name}!!"
         nil

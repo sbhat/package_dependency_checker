@@ -1,10 +1,10 @@
 require 'spec/spec_helper.rb'
 require 'java'
-require 'app/java_source/sfile.rb'
+require 'app/java_source/java_file.rb'
 
-describe JavaSource::SFile do
+describe JavaSource::JavaFile do
   before :each do
-    @file = JavaSource::SFile.new("#{ROOT}/spec/src/japa/parser/ASTParser.java")
+    @file = JavaSource::JavaFile.new("#{ROOT}/spec/src/japa/parser/ASTParser.java")
   end
 
   context "#source_package" do

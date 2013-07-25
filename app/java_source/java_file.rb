@@ -4,7 +4,7 @@ require "lib/ruby/java_lib.rb"
 require "lib/ruby/java_io.rb"
 
 module JavaSource
-  class SFile
+  class JavaFile
     attr_reader :name
 
     def initialize file_path
