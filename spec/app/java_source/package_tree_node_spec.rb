@@ -14,7 +14,29 @@ describe JavaSource::PackageTreeNode do
 
     it "should return nil when it doesn't matches with the target node" do
       target_node = JavaSource::PackageTreeNode.add('java', nil, '*', 0)
-      (@node - target_node).should  == @node
+      node_clone = @node - target_node
+
+      node_clone.instance_variable_get("@name").should == 'japa'
+      node_clone.instance_variable_get("@level").should == 0
+      node_clone.instance_variable_get("@parent_node").should be_nil
+
+      child_nodes = node_clone.instance_variable_get("@child_nodes")
+      child_nodes.size.should == 1
+      child_node = child_nodes.first
+      child_node.should_not be_nil
+      child_node.instance_variable_get("@name").should == 'parser'
+      child_node.instance_variable_get("@level").should == 1
+      child_node.instance_variable_get("@parent_node").should == node_clone
+
+      parent_node = child_node
+      child_nodes = child_node.instance_variable_get("@child_nodes")
+      child_nodes.size.should == 1
+      child_node = child_nodes.first
+      child_node.should_not be_nil
+      child_node.instance_variable_get("@name").should == 'ast'
+      child_node.instance_variable_get("@level").should == 2
+      child_node.instance_variable_get("@parent_node").should == parent_node
+
     end
 
     it "should return nil when it matches a leaf target node and has no non leaf child nodes" do
@@ -197,10 +219,10 @@ describe JavaSource::PackageTreeNode do
     end
   end
 
-  context '#find_by_name_and_level' do
+  context '#find_package_node_by_name_and_level' do
     it "should return self when it matches both name and level" do
       node = JavaSource::PackageTreeNode.add('japa', nil, '', 0)
-      matching_node = node.find_by_name_and_level('japa', 0)
+      matching_node = node.find_package_node_by_name_and_level('japa', 0)
       matching_node.should_not be_nil
       matching_node.should == node
     end
@@ -208,14 +230,14 @@ describe JavaSource::PackageTreeNode do
     it "should return nil when the level is lower than itself" do
       node = JavaSource::PackageTreeNode.add('japa', nil, 'parser', 0)
       child_node = node.instance_variable_get('@child_nodes').first
-      matching_node = child_node.find_by_name_and_level('japa', 0)
+      matching_node = child_node.find_package_node_by_name_and_level('japa', 0)
       matching_node.should be_nil
     end
 
     it "should return matching child node when the level is higher than itself" do
       node = JavaSource::PackageTreeNode.add('japa', nil, 'parser', 0)
       child_node = node.instance_variable_get('@child_nodes').first
-      matching_node = node.find_by_name_and_level('parser', 1)
+      matching_node = node.find_package_node_by_name_and_level('parser', 1)
       matching_node.should_not be_nil
       matching_node.should == child_node
     end

@@ -22,7 +22,7 @@ module JavaSource
     def add_child_nodes child_node_names
       child_node_names = child_node_names.split('.') unless child_node_names.is_a?(Array)
       unless child_node_names.empty?
-        if child_node = self.find_by_name_and_level(child_node_names.first, @level+1)
+        if child_node = self.find_package_node_by_name_and_level(child_node_names.first, @level+1)
           child_node.add_child_nodes(child_node_names[1..-1] || [])
         else
           new_child_node = self.class.add(child_node_names.first, self, (child_node_names[1..-1] || []), @level+1)
@@ -43,12 +43,12 @@ module JavaSource
       @name == name && @level == level
     end
 
-    def find_by_name_and_level name, level
+    def find_package_node_by_name_and_level name, level
       return self if matches_by_name_and_level?(name, level)
       if level > @level
         matching_node = nil
         @child_nodes.each do |child_node|
-          matching_node = child_node.find_by_name_and_level(name, level)
+          matching_node = child_node.find_package_node_by_name_and_level(name, level)
           break if !matching_node.nil?
         end
         return matching_node
@@ -66,7 +66,7 @@ module JavaSource
       elsif matches?(target_package_node)
         return clone_with(left_join_of_child_nodes(target_package_node))
       else
-        return self
+        return clone
       end
     end
 
@@ -96,6 +96,10 @@ module JavaSource
 
     def matching_child_node match_node
       @child_nodes.detect{|node| node.matches?(match_node)}
+    end
+
+    def clone
+      self.class.new(@name, @parent_node, @child_nodes.map{|child_node| child_node.clone}, @level)
     end
 
     private
