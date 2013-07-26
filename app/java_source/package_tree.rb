@@ -26,7 +26,7 @@ module JavaSource
       package_names = package_name.split('.')
       unless package_names.empty?
         if matching_root_package_node = find_root_package_node_by_name(package_names.first)
-          matching_root_package_node.add_child_nodes(package_names[1..-1] || [])
+          matching_root_package_node.add_child_node_hierarchy(package_names[1..-1] || [])
         else
           new_root_package_node = JavaSource::PackageTreeNode.add(package_names.first, nil, (package_names[1..-1] || []), 0)
           @root_package_nodes << new_root_package_node unless new_root_package_node.nil?

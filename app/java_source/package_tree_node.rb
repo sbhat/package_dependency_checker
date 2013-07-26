@@ -15,7 +15,7 @@ module JavaSource
     def self.add name, parent_node, child_node_names, level
       self.new(name, parent_node, [], level).tap do |new_node|
         child_node_names = child_node_names.split('.') unless child_node_names.is_a?(Array)
-        new_node.add_child_nodes(child_node_names) unless child_node_names.empty?
+        new_node.add_child_node_hierarchy(child_node_names) unless child_node_names.empty?
       end
     end
 
@@ -27,13 +27,13 @@ module JavaSource
       end
     end
 
-    def add_child_nodes child_node_names
-      child_node_names = child_node_names.split('.') unless child_node_names.is_a?(Array)
-      unless child_node_names.empty?
-        if child_node = self.find_package_node_by_name_and_level(child_node_names.first, @level+1)
-          child_node.add_child_nodes(child_node_names[1..-1] || [])
+    def add_child_node_hierarchy child_node_hierarchy
+      child_node_hierarchy = child_node_hierarchy.split('.') unless child_node_hierarchy.is_a?(Array)
+      unless child_node_hierarchy.empty?
+        if child_node = self.find_package_node_by_name_and_level(child_node_hierarchy.first, @level+1)
+          child_node.add_child_node_hierarchy(child_node_hierarchy[1..-1] || [])
         else
-          new_child_node = self.class.add(child_node_names.first, self, (child_node_names[1..-1] || []), @level+1)
+          new_child_node = self.class.add(child_node_hierarchy.first, self, (child_node_hierarchy[1..-1] || []), @level+1)
           @child_nodes << new_child_node unless new_child_node.nil?
         end
       end

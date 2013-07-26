@@ -45,7 +45,7 @@ describe JavaSource::PackageTreeNode do
     end
 
     it "should return clone itself with left join of its child nodes with child nodes of the target node" do
-      @node.add_child_nodes('parser.body.test')
+      @node.add_child_node_hierarchy('parser.body.test')
       # child_nodes = node.instance_variable_get("@child_nodes")
       # child_nodes.size.should == 2
       target_node = JavaSource::PackageTreeNode.add('japa', nil, 'parser', 0)
@@ -85,7 +85,7 @@ describe JavaSource::PackageTreeNode do
 
     it "should return new node with non leaf child nodes when it matches a leaf target node" do
       node = JavaSource::PackageTreeNode.add('japa', nil, 'Parser', 0)
-      node.add_child_nodes('parser.body')
+      node.add_child_node_hierarchy('parser.body')
       child_nodes = node.instance_variable_get("@child_nodes")
       child_nodes.size.should == 2
       target_node = JavaSource::PackageTreeNode.add('japa', nil, '', 0)
@@ -115,9 +115,9 @@ describe JavaSource::PackageTreeNode do
     end
 
     it "should return nil when it matches a target node with exact child node structure" do
-      @node.add_child_nodes('parser.body')
+      @node.add_child_node_hierarchy('parser.body')
       target_node = JavaSource::PackageTreeNode.add('japa', nil, 'parser.ast', 0)
-      target_node.add_child_nodes('parser.body')
+      target_node.add_child_node_hierarchy('parser.body')
       (@node - target_node).should be_nil
     end
   end
@@ -273,14 +273,14 @@ describe JavaSource::PackageTreeNode do
 
     it "should return app package names" do
       node = JavaSource::PackageTreeNode.add('japa', nil, 'parser.ast', 0)
-      node.add_child_nodes('parser.body')
-      node.add_child_nodes('body')
+      node.add_child_node_hierarchy('parser.body')
+      node.add_child_node_hierarchy('body')
 
       node.packages.should == ['japa.parser.ast', 'japa.parser.body', 'japa.body']
     end
   end
 
-  context "#add_child_nodes" do
+  context "#add_child_node_hierarchy" do
     it "should create a new node" do
       parent_node = JavaSource::PackageTreeNode.add('japa', nil, 'parser.ast', 0)
 
@@ -292,7 +292,7 @@ describe JavaSource::PackageTreeNode do
       existing_node.instance_variable_get("@level").should == 1
       existing_node.instance_variable_get("@parent_node").should == parent_node
 
-      parent_node.add_child_nodes("body")
+      parent_node.add_child_node_hierarchy("body")
 
       child_nodes = parent_node.instance_variable_get("@child_nodes")
       child_nodes.should_not be_empty
@@ -316,7 +316,7 @@ describe JavaSource::PackageTreeNode do
       existing_node.instance_variable_get("@level").should == 1
       existing_node.instance_variable_get("@parent_node").should == parent_node
 
-      parent_node.add_child_nodes("parser.body")
+      parent_node.add_child_node_hierarchy("parser.body")
 
       child_nodes = parent_node.instance_variable_get("@child_nodes")
       child_nodes.should_not be_empty
