@@ -31,12 +31,10 @@ class PackageDependencyChecker
   end
 
   def missing_dependent_packages_for java_file
-    jimport_declarations = java_file.import_declarations
-    missing_dependent_packages = jimport_declarations.select do |jimport_declaration|
-      source_package_tree = JavaSource::PackageTree.create_by(jimport_declaration.name.qualifier.to_s)
-      !(source_package_tree-@target_package_tree).packages.empty?
-    end
-    missing_dependent_packages.map{|package| package.name.to_s}
+    dependent_packages = java_file.dependent_packages
+    source_package_tree = JavaSource::PackageTree.new
+    dependent_packages.each{|dependent_package| source_package_tree.add(dependent_package)}
+    (source_package_tree-@target_package_tree).packages
   end
 
   def source_files

@@ -7,7 +7,7 @@ module JavaSource
       @parent_node = parent_node
       @child_nodes = child_nodes
       @child_nodes.each do |child_node|
-        child_node.parent_node = self
+        child_node.set_parent self
       end
       @level = level
     end
@@ -16,6 +16,14 @@ module JavaSource
       self.new(name, parent_node, [], level).tap do |new_node|
         child_node_names = child_node_names.split('.') unless child_node_names.is_a?(Array)
         new_node.add_child_nodes(child_node_names) unless child_node_names.empty?
+      end
+    end
+
+    def set_parent parent_node
+      if parent_node
+        @parent_node = parent_node
+      else
+        raise "Already belongs to a parent package!!"
       end
     end
 
