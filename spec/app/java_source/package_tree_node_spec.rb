@@ -7,12 +7,12 @@ describe JavaSource::PackageTreeNode do
       @node = JavaSource::PackageTreeNode.add('japa', nil, 'parser.ast', 0)
     end
 
-    it "should return nil when it matches with the target node with match all child node" do
+    it "should return nil when it matches with the target node having a match all child node" do
       target_node = JavaSource::PackageTreeNode.add('japa', nil, '*', 0)
       (@node - target_node).should be_nil
     end
 
-    it "should return nil when it doesn't matches with the target node" do
+    it "should return clone of itself when it doesn't matches with the target node" do
       target_node = JavaSource::PackageTreeNode.add('java', nil, '*', 0)
       node_clone = @node - target_node
 
@@ -39,12 +39,12 @@ describe JavaSource::PackageTreeNode do
 
     end
 
-    it "should return nil when it matches a leaf target node and has no non leaf child nodes" do
+    it "should return nil when it matches a leaf target node and has only leaf child nodes" do
       target_node = JavaSource::PackageTreeNode.add('japa', nil, 'parser', 0)
       (@node - target_node).should be_nil
     end
 
-    it "should return clone itself with left join of its child nodes with child nodes of the target node" do
+    it "should return clone of itself with left join of child nodes with that of the target node" do
       @node.add_child_node_hierarchy('parser.body.test')
       # child_nodes = node.instance_variable_get("@child_nodes")
       # child_nodes.size.should == 2
