@@ -102,8 +102,9 @@ module JavaSource
       package_tree_node.matches_name?(@name) && package_tree_node.matches_level?(@level)
     end
 
-    def matching_child_node match_node
-      @child_nodes.detect{|node| node.matches?(match_node)}
+    def new_matching_child_node match_node
+      matching_child_node = @child_nodes.detect{|node| node.matches?(match_node)}
+      matching_child_node.nil? ? nil : matching_child_node.clone
     end
 
     def clone
@@ -139,7 +140,7 @@ module JavaSource
     def left_join_of_child_nodes package_tree_node
       child_nodes = []
       @child_nodes.each do |child_node|
-        matching_target_child_node = package_tree_node.matching_child_node(child_node)
+        matching_target_child_node = package_tree_node.new_matching_child_node(child_node)
         if matching_target_child_node.nil?
           child_nodes << child_node
         else
@@ -148,14 +149,6 @@ module JavaSource
         end
       end
       child_nodes
-    end
-
-    def leaf_child_nodes
-      @child_nodes.select{|node| node.leaf_node?} || []
-    end
-
-    def has_leaf_child_nodes?
-      !leaf_child_nodes.empty?
     end
 
     def non_leaf_child_nodes
