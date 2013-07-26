@@ -13,9 +13,9 @@ describe JavaSource::JavaFile do
     end
   end
 
-  context "#import_declarations" do
+  context "#dependent_packages" do
     it "should return an array of dependent packages" do
-      @file.import_declarations.first.name.to_s.should == 'japa.parser.ast.Comment'
+      @file.dependent_packages.first.should == 'japa.parser.ast.Comment'
     end
   end
 end

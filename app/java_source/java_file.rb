@@ -16,10 +16,6 @@ module JavaSource
       @jcompilation_unit.package.name.to_s
     end
 
-    def import_declarations
-      (@jcompilation_unit.imports || []).to_a
-    end
-
     def dependent_packages
       (@jcompilation_unit.imports || []).to_a.map{|package_declaration| package_declaration.name.to_s}
     end
