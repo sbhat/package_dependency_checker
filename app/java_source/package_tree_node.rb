@@ -130,6 +130,7 @@ module JavaSource
     end
 
     def clone_with_non_leaf_child_nodes
+      non_leaf_child_nodes.map!{|node| node.clone}
       self.class.new(@name, @parent_node, non_leaf_child_nodes, @level)
     end
 
@@ -142,7 +143,7 @@ module JavaSource
       @child_nodes.each do |child_node|
         matching_target_child_node = package_tree_node.new_matching_child_node(child_node)
         if matching_target_child_node.nil?
-          child_nodes << child_node
+          child_nodes << child_node.clone
         else
           new_node =  child_node - matching_target_child_node
           child_nodes << new_node if new_node
