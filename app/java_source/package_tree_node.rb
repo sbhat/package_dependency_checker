@@ -5,17 +5,15 @@ module JavaSource
     def initialize name, parent_node = nil, child_nodes = [], level = 0
       @name = name
       @parent_node = parent_node
-      @child_nodes = child_nodes
-      @child_nodes.each do |child_node|
-        child_node.set_parent self
-      end
+      @child_nodes = ((name == '*') ? [] : child_nodes)
+      @child_nodes.each{|child_node| child_node.set_parent self }
       @level = level
     end
 
-    def self.add name, parent_node, child_node_names, level
-      self.new(name, parent_node, [], level).tap do |new_node|
-        child_node_names = child_node_names.split('.') unless child_node_names.is_a?(Array)
-        new_node.add_child_node_hierarchy(child_node_names) unless child_node_names.empty?
+    def self.add name, parent_node, child_node_hierarchy, level
+      new(name, parent_node, [], level).tap do |new_node|
+        child_node_hierarchy = child_node_hierarchy.split('.') unless child_node_hierarchy.is_a?(Array)
+        new_node.add_child_node_hierarchy(child_node_hierarchy) unless child_node_hierarchy.empty?
       end
     end
 
@@ -65,14 +63,9 @@ module JavaSource
     end
 
     def - (target_package_node)
-      if matches_all?(target_package_node)
-        return nil
-      elsif matches_leaf_node?(target_package_node)
-        return (has_non_leaf_child_nodes? ? clone_with_non_leaf_child_nodes : nil)
-      elsif matches_exactly?(target_package_node)
-        return nil
-      elsif matches?(target_package_node)
-        return clone_with(left_join_of_child_nodes(target_package_node))
+      if matches?(target_package_node)
+        child_nodes =  left_join_of_child_nodes(target_package_node)
+        return child_nodes.empty? ? nil: clone_with(child_nodes)
       else
         return clone
       end
@@ -102,9 +95,9 @@ module JavaSource
       package_tree_node.matches_name?(@name) && package_tree_node.matches_level?(@level)
     end
 
-    def new_matching_child_node match_node
+    def matching_child_node match_node
       matching_child_node = @child_nodes.detect{|node| node.matches?(match_node)}
-      matching_child_node.nil? ? nil : matching_child_node.clone
+      matching_child_node.nil? ? nil : matching_child_node
     end
 
     def clone
@@ -113,25 +106,8 @@ module JavaSource
 
     private
 
-    def add_child_node name, child_node_names
-      self.class.add(name, self, child_node_names, @level + 1)
-    end
-
-    def matches_all? package_tree_node
-      matches?(package_tree_node) && package_tree_node.matches_all_child_nodes?
-    end
-
-    def matches_exactly? package_tree_node
-      matches?(package_tree_node) && left_join_of_child_nodes(package_tree_node).empty?
-    end
-
-    def matches_leaf_node? package_tree_node
-      matches?(package_tree_node) && package_tree_node.leaf_node?
-    end
-
-    def clone_with_non_leaf_child_nodes
-      non_leaf_child_nodes.map!{|node| node.clone}
-      self.class.new(@name, @parent_node, non_leaf_child_nodes, @level)
+    def add_child_node name, child_node_hierarchy
+      self.class.add(name, self, child_node_hierarchy, @level + 1)
     end
 
     def clone_with child_nodes
@@ -139,17 +115,19 @@ module JavaSource
     end
 
     def left_join_of_child_nodes package_tree_node
-      child_nodes = []
-      @child_nodes.each do |child_node|
-        matching_target_child_node = package_tree_node.new_matching_child_node(child_node)
-        if matching_target_child_node.nil?
-          child_nodes << child_node.clone
-        else
-          new_node =  child_node - matching_target_child_node
-          child_nodes << new_node if new_node
+      return [] if package_tree_node.matches_all_child_nodes?
+      return non_leaf_child_nodes.map{|node| node.clone} if package_tree_node.leaf_node?
+      [].tap do |child_nodes|
+        @child_nodes.each do |child_node|
+          matching_target_node = package_tree_node.matching_child_node(child_node)
+          if matching_target_node.nil?
+            child_nodes << child_node.clone
+          else
+            new_child_node = child_node - matching_target_node
+            child_nodes << new_child_node if new_child_node
+          end
         end
       end
-      child_nodes
     end
 
     def non_leaf_child_nodes

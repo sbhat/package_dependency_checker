@@ -129,12 +129,12 @@ describe JavaSource::PackageTreeNode do
 
     it "should return matching child node" do
       match_node = JavaSource::PackageTreeNode.add('parser', @node, 'ast', 1)
-      @node.new_matching_child_node(match_node).should_not be_nil
+      @node.matching_child_node(match_node).should_not be_nil
     end
 
     it "should return nil when matching child node" do
       match_node = JavaSource::PackageTreeNode.add('ast', @node, 'ast', 1)
-      @node.new_matching_child_node(match_node).should be_nil
+      @node.matching_child_node(match_node).should be_nil
     end
   end
 
